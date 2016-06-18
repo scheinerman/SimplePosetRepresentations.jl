@@ -7,7 +7,7 @@ using SimplePosets, ClosedIntervals
 export IntervalOrder
 
 """
-`IntervalOrder(Jmap)` creates an inteval order from a dictionary
+`IntervalOrder(Jmap)` creates an interval order from a dictionary
 mapping elements to closed intervals.
 """
 function IntervalOrder{S,T}(Jmap::Dict{S,ClosedInterval{T}})
