@@ -51,7 +51,7 @@ end
 `IntervalOrder(Jset)` creates an interval order from a set of
 closed intervals. The elements of the poset are the intervals.
 """
-function IntervalOrder{T}(Jset::Set{ClosedInteral{T}})
+function IntervalOrder{T}(Jset::Set{ClosedInterval{T}})
   Jtype = ClosedInterval{T}
   d = Dict{Jtype,Jtype}()
   for J in Jset
