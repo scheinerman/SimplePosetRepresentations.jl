@@ -17,13 +17,13 @@ function IntervalOrder{S,T}(Jmap::Dict{S,ClosedInterval{T}})
   end
   verts = elements(P)
   n = length(verts)
-  for i=1:n-1
+  for i=1:n
     u = verts[i]
     I = Jmap[u]
-    for j=i+1:n
+    for j=1:n
       v = verts[j]
       J = Jmap[v]
-      if I << J
+      if I << J && i!=j
         add!(P,u,v)
       end
     end
