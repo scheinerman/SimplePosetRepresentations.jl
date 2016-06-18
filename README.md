@@ -1,3 +1,3 @@
-# SimplePosetRepresentations
+# Simple Poset Representations
 
-Random posets, interval orders, and the like.
+Interval orders, and the like.
