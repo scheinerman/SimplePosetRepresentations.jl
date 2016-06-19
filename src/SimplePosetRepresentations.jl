@@ -4,7 +4,8 @@ module SimplePosetRepresentations
 
 using SimplePosets, ClosedIntervals
 
-export IntervalOrder, SemiOrder
+import Base.show
+export IntervalOrder, SemiOrder, Circle, inside
 
 ### INTERVAL ORDERS
 
@@ -121,5 +122,36 @@ function SemiOrder{T<:Real}(Xset::Set{T})
 end
 
 SemiOrder(Xset::IntSet) = SemiOrder(Set(Xset))
+
+
+### CIRCLE ORDERS
+"""
+The `Circle` datatype represents a circle in the
+plane specified by a center and a radius like this:
+`Circle(x,y,r)`.
+"""
+immutable Circle{X<:Real, Y<:Real, R<:Real}
+  x::X     # x-coordinate of center
+  y::Y     # y-coordinate of center
+  r::R     # radius
+end
+
+function show(io::IO, C::Circle)
+  print(io, "Circle($(C.x), $(C.y), $(C.r))")
+end
+
+"""
+`inside(C,D)` returns `true` provided circle `C`
+is entirely contained inside circle `D`.
+"""
+function inside(C::Circle, D::Circle)
+  dx = C.x - D.x
+  dy = C.y - D.y
+  dr = C.r - D.r
+  return (dr<=0)&&(dx*dx + dy*dy <= dr*dr)
+end
+
+
+
 
 end  # end of module
