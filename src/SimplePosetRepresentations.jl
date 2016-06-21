@@ -7,31 +7,60 @@ using SimplePosets, ClosedIntervals
 import Base.show
 export IntervalOrder, SemiOrder, Circle, inside
 
+export poset_builder
+
+
+### GENERAL MACHINERY
+
+function poset_builder{S,T}(Xdict::Dict{S,T}, comparator::Function)
+  P = SimplePoset{S}()
+  for v in keys(Xdict)
+    add!(P,v)
+  end
+  elts = collect(keys(Xdict))
+  n = length(elts)
+  for i=1:n
+    a = elts[i]
+    u = Xdict[a]
+    for j=1:n
+      b = elts[j]
+      v = Xdict[b]
+      if i!=j && comparator(u,v)
+        add!(P,a,b)
+      end
+    end
+  end
+  return P
+end
+
+function poset_builder{S}(Xlist::Vector{S}, comparator::Function)
+  d = Dict{Int,S}()
+  n = length(Xlist)
+  for i=1:n
+    d[i] = Xlist[i]
+  end
+  return poset_builder(d,comparator)
+end
+
+function poset_builder{S}(Xset::Set{S}, comparator::Function)
+  d = Dict{S,S}()
+  for s in Xset
+    d[s] = s
+  end
+  return poset_builder(d,comparator)
+end
+
+
 ### INTERVAL ORDERS
+
+_interval_compare{S}(I::ClosedInterval{S}, J::ClosedInterval{S}) = I << J
 
 """
 `IntervalOrder(Jmap)` creates an interval order from a dictionary
 mapping elements to closed intervals.
 """
 function IntervalOrder{S,T}(Jmap::Dict{S,ClosedInterval{T}})
-  P = SimplePoset{S}()
-  for v in keys(Jmap)
-    add!(P,v)
-  end
-  verts = elements(P)
-  n = length(verts)
-  for i=1:n
-    u = verts[i]
-    I = Jmap[u]
-    for j=1:n
-      v = verts[j]
-      J = Jmap[v]
-      if I << J && i!=j
-        add!(P,u,v)
-      end
-    end
-  end
-  return P
+  return poset_builder(Jmap,_interval_compare)
 end
 
 """
@@ -40,12 +69,7 @@ intervals. The elements of the poset are named `1:n` where `n`
 is the length of the `Jlist`.
 """
 function IntervalOrder{T}(Jlist::Vector{ClosedInterval{T}})
-  d = Dict{Int,ClosedInterval{T}}()
-  n = length(Jlist)
-  for k=1:n
-    d[k] = Jlist[k]
-  end
-  return IntervalOrder(d)
+  return poset_builder(Jlist,_interval_compare)
 end
 
 """
@@ -53,12 +77,7 @@ end
 closed intervals. The elements of the poset are the intervals.
 """
 function IntervalOrder{T}(Jset::Set{ClosedInterval{T}})
-  Jtype = ClosedInterval{T}
-  d = Dict{Jtype,Jtype}()
-  for J in Jset
-    d[J] = J
-  end
-  return IntervalOrder(d)
+  return poset_builder(Jset,_interval_compare)
 end
 
 
