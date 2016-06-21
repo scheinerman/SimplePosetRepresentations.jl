@@ -5,7 +5,8 @@ module SimplePosetRepresentations
 using SimplePosets, ClosedIntervals
 
 import Base.show
-export IntervalOrder, SemiOrder, Circle, inside
+export IntervalOrder, SemiOrder
+export Circle, inside, CircleOrder
 
 export poset_builder
 
@@ -83,35 +84,15 @@ end
 
 ### SEMIORDERS
 
+_unit_compare(x::Real,y::Real) = x+1 < y
+
 """
 `SemiOrder(Xmap)` creates a semiorder whose elements are the
 keys in the dictionary `Xmap`. We have `a<b` provided
 `Xmap[a]+1 < Xmap[b]`.
 """
 function SemiOrder{S,T<:Real}(Xmap::Dict{S,T})
-  xvals = collect(keys(Xmap))
-  n = length(xvals)
-  P = SimplePoset{S}()
-
-  for x in xvals
-    add!(P,x)
-  end
-
-  for i=1:n
-    a = xvals[i]
-    x = Xmap[a]
-    for j=1:n
-      if i==j
-        continue
-      end
-      b = xvals[j]
-      y = Xmap[b]
-      if x+1 < y
-        add!(P,a,b)
-      end
-    end
-  end
-  return P
+  return poset_builder(Xmap, _unit_compare)
 end
 
 """
@@ -119,12 +100,7 @@ end
 The elements are `1:n` and we have `a<b` provided `Xlist[a]+1 < Xlist[b]`.
 """
 function SemiOrder{T<:Real}(Xlist::Vector{T})
-  n = length(Xlist)
-  d = Dict{Int,T}()
-  for k=1:n
-    d[k] = Xlist[k]
-  end
-  return SemiOrder(d)
+  return poset_builder(Xlist, _unit_compare)
 end
 
 """
@@ -133,11 +109,7 @@ The elements of the poset are the elements of `Xset`. For two elements
 `a` and `b` we have `a<b` in the poset iff `a+1 < b` as real numbers.
 """
 function SemiOrder{T<:Real}(Xset::Set{T})
-  d = Dict{T,T}()
-  for x in Xset
-    d[x] = x
-  end
-  return SemiOrder(d)
+  return poset_builder(Xset,_unit_compare)
 end
 
 SemiOrder(Xset::IntSet) = SemiOrder(Set(Xset))
@@ -170,6 +142,17 @@ function inside(C::Circle, D::Circle)
   return (dr<=0)&&(dx*dx + dy*dy <= dr*dr)
 end
 
+function CircleOrder{S}(Cmap::Dict{S,Circle})
+  return poset_builder(Cmap,inside)
+end
+
+function CircleOrder(Clist::Vector{Circle})
+  return poset_builder(Clist,inside)
+end
+
+function CircleOrder(Cset::Set{Circle})
+  return poset_builder(Cset,inside)
+end
 
 
 
