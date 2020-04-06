@@ -3,8 +3,7 @@ uuid = "f32c3522-cdf4-5852-ad6f-bb7b6533f79f"
 
 [deps]
 ClosedIntervals = "059b0e18-018a-5deb-a5b2-c624ee85784b"
-Julia = "1a0f1ddf-8b1e-5966-9676-760d8c11ae45"
 SimplePosets = "b2aef97b-4721-5af9-b440-0bad754dc5ba"
 
 [compat]
-Julia = "≥ 1.0.0"
+julia = "≥ 1.0.0"
