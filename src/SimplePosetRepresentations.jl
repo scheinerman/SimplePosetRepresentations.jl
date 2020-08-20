@@ -13,7 +13,7 @@ export poset_builder
 
 ### GENERAL MACHINERY
 
-function poset_builder{S,T}(Xdict::Dict{S,T}, comparator::Function)
+function poset_builder(Xdict::Dict{S,T}, comparator::Function) where {S,T}
   P = SimplePoset{S}()
   for v in keys(Xdict)
     add!(P,v)
@@ -34,7 +34,7 @@ function poset_builder{S,T}(Xdict::Dict{S,T}, comparator::Function)
   return P
 end
 
-function poset_builder{S}(Xlist::Vector{S}, comparator::Function)
+function poset_builder(Xlist::Vector{S}, comparator::Function) where S
   d = Dict{Int,S}()
   n = length(Xlist)
   for i=1:n
@@ -43,7 +43,7 @@ function poset_builder{S}(Xlist::Vector{S}, comparator::Function)
   return poset_builder(d,comparator)
 end
 
-function poset_builder{S}(Xset::Set{S}, comparator::Function)
+function poset_builder(Xset::Set{S}, comparator::Function) where S
   d = Dict{S,S}()
   for s in Xset
     d[s] = s
@@ -54,13 +54,13 @@ end
 
 ### INTERVAL ORDERS
 
-_interval_compare{S}(I::ClosedInterval{S}, J::ClosedInterval{S}) = I << J
+_interval_compare(I::ClosedInterval{S}, J::ClosedInterval{S}) where S = I << J
 
 """
 `IntervalOrder(Jmap)` creates an interval order from a dictionary
 mapping elements to closed intervals.
 """
-function IntervalOrder{S,T}(Jmap::Dict{S,ClosedInterval{T}})
+function IntervalOrder(Jmap::Dict{S,ClosedInterval{T}}) where {S,T}
   return poset_builder(Jmap,_interval_compare)
 end
 
@@ -69,7 +69,7 @@ end
 intervals. The elements of the poset are named `1:n` where `n`
 is the length of the `Jlist`.
 """
-function IntervalOrder{T}(Jlist::Vector{ClosedInterval{T}})
+function IntervalOrder(Jlist::Vector{ClosedInterval{T}}) where T
   return poset_builder(Jlist,_interval_compare)
 end
 
@@ -77,7 +77,7 @@ end
 `IntervalOrder(Jset)` creates an interval order from a set of
 closed intervals. The elements of the poset are the intervals.
 """
-function IntervalOrder{T}(Jset::Set{ClosedInterval{T}})
+function IntervalOrder(Jset::Set{ClosedInterval{T}}) where T
   return poset_builder(Jset,_interval_compare)
 end
 
@@ -91,7 +91,7 @@ _unit_compare(x::Real,y::Real) = x+1 < y
 keys in the dictionary `Xmap`. We have `a<b` provided
 `Xmap[a]+1 < Xmap[b]`.
 """
-function SemiOrder{S,T<:Real}(Xmap::Dict{S,T})
+function SemiOrder(Xmap::Dict{S,T}) where {S,T<:Real}
   return poset_builder(Xmap, _unit_compare)
 end
 
@@ -99,7 +99,7 @@ end
 `SemiOrder(Xlist)` creates a semiorder from a list of real numbers.
 The elements are `1:n` and we have `a<b` provided `Xlist[a]+1 < Xlist[b]`.
 """
-function SemiOrder{T<:Real}(Xlist::Vector{T})
+function SemiOrder(Xlist::Vector{T}) where {T<:Real}
   return poset_builder(Xlist, _unit_compare)
 end
 
@@ -108,11 +108,11 @@ end
 The elements of the poset are the elements of `Xset`. For two elements
 `a` and `b` we have `a<b` in the poset iff `a+1 < b` as real numbers.
 """
-function SemiOrder{T<:Real}(Xset::Set{T})
+function SemiOrder(Xset::Set{T}) where {T<:Real}
   return poset_builder(Xset,_unit_compare)
 end
 
-SemiOrder(Xset::IntSet) = SemiOrder(Set(Xset))
+SemiOrder(Xset::BitSet) = SemiOrder(Set(Xset))
 
 
 ### CIRCLE ORDERS
@@ -121,7 +121,7 @@ The `Circle` datatype represents a circle in the
 plane specified by a center and a radius like this:
 `Circle(x,y,r)`.
 """
-immutable Circle{X<:Real, Y<:Real, R<:Real}
+struct Circle{X<:Real, Y<:Real, R<:Real}
   x::X     # x-coordinate of center
   y::Y     # y-coordinate of center
   r::R     # radius
@@ -142,7 +142,7 @@ function inside(C::Circle, D::Circle)
   return (dr<=0)&&(dx*dx + dy*dy <= dr*dr)
 end
 
-function CircleOrder{S}(Cmap::Dict{S,Circle})
+function CircleOrder(Cmap::Dict{S,Circle}) where S
   return poset_builder(Cmap,inside)
 end
 
