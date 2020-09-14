@@ -6,4 +6,4 @@ ClosedIntervals = "059b0e18-018a-5deb-a5b2-c624ee85784b"
 SimplePosets = "b2aef97b-4721-5af9-b440-0bad754dc5ba"
 
 [compat]
-julia = "≥ 1.0.0"
+julia = "1"
