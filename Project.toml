@@ -1,6 +1,6 @@
 name = "SimplePosetRepresentations"
 uuid = "f32c3522-cdf4-5852-ad6f-bb7b6533f79f"
-version = "0.0.1"
+version = "0.0.2"
 
 [deps]
 ClosedIntervals = "059b0e18-018a-5deb-a5b2-c624ee85784b"
@@ -9,4 +9,4 @@ SimplePosets = "b2aef97b-4721-5af9-b440-0bad754dc5ba"
 [compat]
 julia = "1"
 ClosedIntervals = "0.3"
-SimplePosets = "0.1"
+SimplePosets = "0.1, 0.2"
